@@ -21,7 +21,9 @@ async function configEmailToSend (account, OTP) {
 async function configEmailToSend1 (account, OTP) {
     const smtpTransport = nodemailer.createTransport(
         {
-            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
             auth: {
                 user: 'ptudwnc.classroom@gmail.com',
                 pass: 'hcmusk18@ddl'

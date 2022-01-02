@@ -1,18 +1,12 @@
 const nodemailer = require("nodemailer");
 const { google } = require('googleapis');
 
-// These id's and secrets should come from .env file.
-const CLIENT_ID = '660685950439-oskm4ugkok2lo30m0h22p7k0ifadrrhu.apps.googleusercontent.com';
-const CLEINT_SECRET = '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';
-const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
-const REFRESH_TOKEN = '1//04eqKRVvWWxSQCgYIARAAGAQSNwF-L9Irk5ph541Qs6Djs_vNF8FAm604nLgeMqqCMXh8eQUEE6T9Il9VDA7yMOXi1ruXXAT9mMQ';
-
 const oAuth2Client = new google.auth.OAuth2(
-  CLIENT_ID,
-  CLEINT_SECRET,
-  REDIRECT_URI
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.REDIRECT_URI
 );
-oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 
 
 const saltRounds = 10;
@@ -21,7 +15,27 @@ let email;
 let globalOTP = "";
 
 async function configEmailToSend (account, OTP) {
-    const smtpTransport = nodemailer.createTransport('smtps://ptudwnc.classroom%40gmail.com:hcmusk18%40ddl@smtp.gmail.com');
+  const accessToken = await oAuth2Client.getAccessToken();
+
+  const smtpTransport = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      type: 'OAuth2',
+      user: 'ptudwnc.classroom@gmail.com',
+      clientId: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      refreshToken: process.env.REFRESH_TOKEN,
+      accessToken: accessToken,
+    },
+  });
+    // const smtpTransport = nodemailer.createTransport(
+    //   {
+    //     service: 'gmail',
+    //     auth:{
+    //       user: 'ptudwnc.classroom@gmail.com',
+    //       pass: 'hcmusek18@ddl'
+    //     }
+    //   })
     const mail = {
         from: "ptudwnc.classroom@gmail.com",
         to: account,
@@ -39,12 +53,20 @@ async function configEmailToSend1 (account, OTP) {
       auth: {
         type: 'OAuth2',
         user: 'ptudwnc.classroom@gmail.com',
-        clientId: CLIENT_ID,
-        clientSecret: CLEINT_SECRET,
-        refreshToken: REFRESH_TOKEN,
+        clientId: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
+        refreshToken: process.env.REFRESH_TOKEN,
         accessToken: accessToken,
       },
     });
+    // const smtpTransport = nodemailer.createTransport(
+    //   {
+    //     service: 'gmail',
+    //     auth:{
+    //       user: 'ptudwnc.classroom@gmail.com',
+    //       pass: 'hcmusek18@ddl'
+    //     }
+    //   })
     const mail = {
         from: "ptudwnc.classroom@gmail.com",
         to: account,

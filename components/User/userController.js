@@ -12,7 +12,7 @@ exports.signUpHandler = async (req, res, next) => {
   //let userId = null
   //console.log(req.body)
   const data = req.body
-  const checkEmailValid = await userService.checkUserSignUp(data.email)
+  const checkEmailValid = await userService.checkUserSignUp(data)
   console.log("checkEmailValid")
   //console.log(checkEmailValid)
   if (checkEmailValid) {

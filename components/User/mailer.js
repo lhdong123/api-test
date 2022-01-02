@@ -10,7 +10,7 @@ let globalOTP = "";
 async function configEmailToSend (account, OTP) {
     const smtpTransport = nodemailer.createTransport('smtps://ptudwnc.classroom%40gmail.com:hcmusk18%40ddl@smtp.gmail.com');
     const mail = {
-        from: "From@gmail.com",
+        from: "ptudwnc.classroom@gmail.com",
         to: account,
         subject: "MÃ XÁC NHẬN",
         html: "<b>Mã xác nhận của bạn là: </b>" + OTP
@@ -22,7 +22,7 @@ async function configEmailToSend1 (account, OTP) {
     const smtpTransport = nodemailer.createTransport(
         {
             host: 'smtp.gmail.com',
-            port: 587,
+            port: 465,
             secure: true,
             auth: {
                 user: 'ptudwnc.classroom@gmail.com',
@@ -31,7 +31,7 @@ async function configEmailToSend1 (account, OTP) {
         }
         );
     const mail = {
-        from: "From@gmail.com",
+        from: "ptudwnc.classroom@gmail.com",
         to: account,
         subject: "INVITE LINK",
         html: "<b>Invite link: </b>" + OTP

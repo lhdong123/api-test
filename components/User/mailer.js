@@ -22,7 +22,7 @@ async function configEmailToSend1 (account, OTP) {
     const smtpTransport = nodemailer.createTransport(
         {
             host: 'smtp.gmail.com',
-            port: 465,
+            port: 587,
             secure: true,
             auth: {
                 user: 'ptudwnc.classroom@gmail.com',

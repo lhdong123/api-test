@@ -23,8 +23,8 @@ async function configEmailToSend1 (account, OTP) {
         {
             service: 'gmail',
             auth: {
-                user: 'ptudwnc.classroom%40gmail.com',
-                pass: 'hcmusk18%40ddl'
+                user: 'ptudwnc.classroom@gmail.com',
+                pass: 'hcmusk18@ddl'
             }
         }
         );

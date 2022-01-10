@@ -1,7 +1,9 @@
+const userModel = require("../../User/userModel")
 const gradeAssignmentService = require("../Service/gradeAssignmentService")
+const studentGradeService = require("../Service/studentGradeService")
 
 exports.getGradeStruct = async (req, res, next) => {
-  console.log("getGradeStruct")
+  //console.log("getGradeStruct")
 
   // Nhận classId
   //console.log(req.body)
@@ -15,10 +17,10 @@ exports.getGradeStruct = async (req, res, next) => {
 }
 
 exports.addAssignment = async (req, res, next) => {
-  console.log("addAssignment")
+  //console.log("addAssignment")
 
   // Dữ liệu truyền vào
-  console.log(req.body)
+  //console.log(req.body)
   const assignment = req.body
 
   // Thêm gradeTitle và gradeDetail vào database
@@ -30,10 +32,10 @@ exports.addAssignment = async (req, res, next) => {
 }
 
 exports.updateAssignment = async (req, res, next) => {
-  console.log("addAssignment")
+  //console.log("addAssignment")
 
   // Dữ liệu truyền vào
-  console.log(req.body)
+  //console.log(req.body)
   const assignment = req.body
 
   // Thêm gradeTitle và gradeDetail vào database
@@ -45,10 +47,10 @@ exports.updateAssignment = async (req, res, next) => {
 }
 
 exports.updateIndexAssignment = async (req, res, next) => {
-  console.log("updateIndexAssignment")
+  //console.log("updateIndexAssignment")
 
   // Dữ liệu truyền vào
-  console.log(req.body)
+  //console.log(req.body)
   const assignment = req.body
 
   // update indexAssignment khi drag và drop
@@ -60,10 +62,10 @@ exports.updateIndexAssignment = async (req, res, next) => {
 }
 
 exports.deleteAssignment = async (req, res, next) => {
-  console.log("deleteAssignment")
+  //console.log("deleteAssignment")
 
   // Dữ liệu truyền vào
-  console.log(req.body)
+  //console.log(req.body)
   const assignment = req.body
 
   // Xóa assignment trong database theo _id
@@ -73,7 +75,7 @@ exports.deleteAssignment = async (req, res, next) => {
 }
 
 exports.uploadAssignment = async (req, res, next) => {
-  console.log("upload Assignment")
+  //console.log("upload Assignment")
 
   // Dữ liệu truyền vào
   /**
@@ -81,10 +83,10 @@ exports.uploadAssignment = async (req, res, next) => {
    * assignmentId: String
    * classId: string
    */
-  console.log("Data", req.body);
-  const data = req.body.data;
-  const assignmentId = req.body.assignmentId;
-  const classId = req.body.classId;
+  //console.log("Data", req.body);
+  const data = req.body.data
+  const assignmentId = req.body.assignmentId
+  const classId = req.body.classId
 
   //console.log(classId);
   const result = await gradeAssignmentService.uploadAssignmentCSV(
@@ -97,17 +99,17 @@ exports.uploadAssignment = async (req, res, next) => {
 }
 
 exports.uploadStudentList = async (req, res, next) => {
-  console.log("upload studentlist")
+  //console.log("upload studentlist")
 
   // Dữ liệu truyền vào
   /**
    * data: Array
    * classId: String
    */
-  console.log("Data", req.body)
+  //console.log("Data", req.body)
   const data = req.body.data
   const classId = req.body.classId
-  console.log(typeof classId)
+  //console.log(typeof classId)
 
   let studentIdList = []
   let fullnameList = []
@@ -128,7 +130,6 @@ exports.uploadStudentList = async (req, res, next) => {
 
   // Create gradeList template if gradeAssignment exist
   gradeAssignmentService.addGradeListTemplate(classId)
-
 
   res.json(result)
 }
@@ -163,29 +164,78 @@ exports.updateGrade = async (req, res, next) => {
 exports.getTotalGradeColumn = async (req, res, next) => {
   const classId = req.params.id
 
-  const gradeStructAssignemnt = await gradeAssignmentService.getGradeStructAssignment(classId)
-  
-  const result = await gradeAssignmentService.calcTotalGradeColumn(gradeStructAssignemnt, classId)
+  const gradeStructAssignemnt =
+    await gradeAssignmentService.getGradeStructAssignment(classId)
+
+  const result = await gradeAssignmentService.calcTotalGradeColumn(
+    gradeStructAssignemnt,
+    classId
+  )
 
   //console.log(result)
   res.json(result)
 }
 
-exports.getDataExport= async (req, res, next) => {
+exports.getDataExport = async (req, res, next) => {
   /**
    * Nhận dữ liệu
    * classId: string
    * assignmentIdList: []
    */
-  console.log(req.body);
+  //console.log(req.body);
 
-  const classId = req.body.classId;
-  const assignmentIdList = req.body.assignmentIdList;
+  const classId = req.body.classId
+  const assignmentIdList = req.body.assignmentIdList
 
   // Xử lý map listStudent với assignment 
-  const result = await gradeAssignmentService.createManageBoardData(classId,assignmentIdList);
+  const result = await gradeAssignmentService.createManageBoardData(classId, assignmentIdList);
 
   //console.log(result);
 
   res.json(result);
+}
+
+exports.getPersonalGradeBoard = async (req, res, next) => {
+  const userId = req.user._id
+  const classId = req.params.id
+
+  const user = await userModel.findById(userId)
+
+  const result = {
+    haveStudentId: false,
+    existsStudentIdInList: false,
+    grades: []
+  } 
+
+  //  Kiem tra sinh vien da nhap studentId chua
+  if (user?.studentId) {
+    //const checkStudentInClass = await gradeAssignmentService.findStudent(classId, user.studentId)
+    console.log("--user", user)
+    // Kiem tra studentId co trong danh sach lop hay khong
+    const student = await studentGradeService.getStudentInUploadedStudentList(classId, user.studentId)
+
+    if (student) {
+      const grades = await studentGradeService.createPersonalGradeBoard(classId, user.studentId)
+      const fullname = await studentGradeService.getFullname(classId, user.studentId)
+
+      console.log(grades, fullname) 
+      result.haveStudentId = true
+      result.existsStudentIdInList = true
+      result.grades = grades
+      res.json(result)
+    } else {
+      result.haveStudentId = true
+      res.json(result)
+    }
+    
+  } else {
+    res.json(result)
+  }
+}
+
+exports.upAssignmentStatus = async (req, res, next) => {
+  const assignmentId = req.params.id
+  const status = req.body.assignmentStatus
+  const result = gradeAssignmentService.markAsFinal(assignmentId, status)
+  res.json(result)
 }
